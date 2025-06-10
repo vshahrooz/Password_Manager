@@ -9,11 +9,6 @@ from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from getpass import getpass
 
-# -------------------------------------------------------------------
-# Vault file path will be determined at runtime via user input.
-# If running as a PyInstaller executable, use the executable's directory.
-# Otherwise, use the script's directory.
-# -------------------------------------------------------------------
 
 def get_base_dir() -> str:
     """
