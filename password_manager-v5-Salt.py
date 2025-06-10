@@ -487,9 +487,6 @@ def change_master_password(vault: dict, old_master_password: str, old_salt: byte
 
     return new_pw1, new_salt
 
-# --------------------------
-# Export / Import Functions
-# --------------------------
 
 def export_vault_to_json(vault: dict):
     """
@@ -561,9 +558,6 @@ def import_vault_from_json(vault: dict) -> dict:
         print("Invalid choice. Import cancelled.")
     return vault
 
-# --------------------------
-# Main Program
-# --------------------------
 
 def main():
     master_password, salt = get_master_password_and_salt()
