@@ -100,7 +100,7 @@ def load_vault(master_password: str, salt: bytes) -> dict:
         decrypted_json = decrypt_vault(encrypted_data, master_password, salt)
         return json.loads(decrypted_json)
     except Exception:
-        print("❌ Incorrect master password or salt, or corrupted vault file.")
+        print("Incorrect master password or salt, or corrupted vault file.")
         exit(1)
 
 def save_vault(vault: dict, master_password: str, salt: bytes) -> None:
@@ -148,11 +148,11 @@ def add_password(vault: dict) -> None:
         vault[category] = []
 
     vault[category].append(record)
-    print(f"✅ Password record added to category '{category}'.")
+    print(f"Password record added to category '{category}'.")
 
 def view_categories(vault: dict) -> list:
     if not vault:
-        print("🔐 Your vault is empty.")
+        print("Your vault is empty.")
         return []
     print("\nCategories:")
     for i, category in enumerate(vault.keys(), start=1):
@@ -180,7 +180,7 @@ def view_passwords_in_category(vault: dict) -> None:
         if choice.lower() == 'q':
             return
         if not choice.isdigit() or int(choice) < 1 or int(choice) > len(categories):
-            print("❌ Invalid choice, try again.")
+            print("Invalid choice, try again.")
             continue
         category = categories[int(choice)-1]
         print(f"\n🔑 Passwords in category '{category}':")
@@ -195,9 +195,9 @@ def view_passwords_in_category(vault: dict) -> None:
 
 def view_all_passwords(vault: dict) -> None:
     if not vault:
-        print("🔐 Your vault is empty.")
+        print("Your vault is empty.")
         return
-    print("\n🔑 All stored passwords by category:")
+    print("\n All stored passwords by category:")
     for category, records in vault.items():
         print(f"\nCategory: {category}")
         if not records:
@@ -220,12 +220,12 @@ def delete_password(vault: dict) -> None:
                     records.remove(rec)
                     if len(records) == 0:
                         del vault[category]
-                    print("✅ Record deleted.")
+                    print("Record deleted.")
                     return
                 else:
-                    print("❌ Deletion cancelled.")
+                    print("Deletion cancelled.")
                     return
-    print("❌ Record with this ID not found.")
+    print("Record with this ID not found.")
 
 def delete_category(vault: dict) -> None:
     categories = view_categories(vault)
@@ -236,16 +236,16 @@ def delete_category(vault: dict) -> None:
         if choice.lower() == 'q':
             return
         if not choice.isdigit() or int(choice) < 1 or int(choice) > len(categories):
-            print("❌ Invalid choice, try again.")
+            print("Invalid choice, try again.")
             continue
         category = categories[int(choice)-1]
         confirm = input(f"Are you sure you want to delete entire category '{category}' and all its records? (y/n): ").strip().lower()
         if confirm == 'y':
             del vault[category]
-            print(f"✅ Category '{category}' and all its records deleted.")
+            print(f"Category '{category}' and all its records deleted.")
             return
         else:
-            print("❌ Deletion cancelled.")
+            print("Deletion cancelled.")
             return
 
 def edit_password(vault: dict) -> None:
@@ -287,12 +287,12 @@ def edit_password(vault: dict) -> None:
                             'description': cdesc if cdesc else None
                         }
                         rec['credentials'].append(new_cred)
-                        print("✅ Credential added.")
+                        print("Credential added.")
 
                     elif action == 'e':
                         cidx = input("Enter credential number to edit: ").strip()
                         if not cidx.isdigit() or int(cidx) < 1 or int(cidx) > len(rec['credentials']):
-                            print("❌ Invalid credential number.")
+                            print("Invalid credential number.")
                             continue
                         cidx = int(cidx) - 1
                         cred = rec['credentials'][cidx]
@@ -309,27 +309,27 @@ def edit_password(vault: dict) -> None:
                         new_cdesc = input(f"  New description (leave empty to keep '{cred['description']}'): ").strip()
                         if new_cdesc:
                             cred['description'] = new_cdesc
-                        print("✅ Credential updated.")
+                        print("Credential updated.")
 
                     elif action == 'd':
                         cidx = input("Enter credential number to delete: ").strip()
                         if not cidx.isdigit() or int(cidx) < 1 or int(cidx) > len(rec['credentials']):
-                            print("❌ Invalid credential number.")
+                            print("Invalid credential number.")
                             continue
                         cidx = int(cidx) - 1
                         del rec['credentials'][cidx]
-                        print("✅ Credential deleted.")
+                        print("Credential deleted.")
 
                     elif action == 'q':
                         break
 
                     else:
-                        print("❌ Invalid option.")
+                        print("Invalid option.")
                 # Save the edited record back
                 records[idx] = rec
-                print("✅ Record updated.")
+                print("Record updated.")
                 return
-    print("❌ Record with this ID not found.")
+    print("Record with this ID not found.")
 
 def find_salt_in_flash() -> bytes:
     """
@@ -389,27 +389,27 @@ def get_master_password_and_salt() -> (str, bytes):
     base_dir = get_base_dir()
 
     if not os.path.exists(VAULT_FILE):
-        # First-time setup: vault does not exist
-        print("🆕 Vault not found. Setting up a new vault.")
+        
+        print("Vault not found. Setting up a new vault.")
         while True:
             pw1 = getpass("Enter new master password (min 6 chars): ")
             pw2 = getpass("Confirm master password: ")
             if pw1 != pw2:
-                print("❌ Passwords do not match. Try again.")
+                print("Passwords do not match. Try again.")
             elif len(pw1) < 6:
-                print("❌ Password too short (minimum 6 characters).")
+                print("Password too short (minimum 6 characters).")
             else:
                 break
 
         salt = get_random_bytes(16)
         salt_b64 = base64.b64encode(salt).decode('utf-8')
-        print("\n✴️  *** IMPORTANT: Save this SALT STRING somewhere safe! ***")
+        print("\n  *** IMPORTANT: Save this SALT STRING somewhere safe! ***")
         print(f"    SALT (Base64): {salt_b64}")
         print("    Without this exact salt, you CANNOT decrypt your vault—even if you know the master password.\n")
         return pw1, salt
 
     else:
-        # Vault already exists: ask for password and salt
+        
         mpw = getpass("Enter master password: ")
 
         while True:
@@ -423,10 +423,10 @@ def get_master_password_and_salt() -> (str, bytes):
             if choice == "":
                 salt_bytes = find_salt_in_flash()
                 if salt_bytes is None:
-                    print("❌ Could not find 'salt.txt' on a USB drive. Try again.")
+                    print("Could not find 'salt.txt' on a USB drive. Try again.")
                     continue
                 if len(salt_bytes) != 16:
-                    print("❌ Found salt.txt but content does not decode to 16 bytes. Try again.")
+                    print("Found salt.txt but content does not decode to 16 bytes. Try again.")
                     continue
                 return mpw, salt_bytes
 
@@ -438,27 +438,27 @@ def get_master_password_and_salt() -> (str, bytes):
                         raise ValueError("Salt must be 16 bytes after Base64 decoding.")
                     return mpw, salt_bytes
                 except Exception:
-                    print("❌ Invalid Base64 salt. Try again.")
+                    print("Invalid Base64 salt. Try again.")
                     continue
 
             if choice == "2":
                 salt_input = input("Enter path to salt text file: ").strip()
                 if not os.path.isfile(salt_input):
-                    print(f"❌ File '{salt_input}' does not exist. Try again.")
+                    print(f"File '{salt_input}' does not exist. Try again.")
                     continue
                 try:
                     with open(salt_input, 'r', encoding='utf-8') as f:
                         data = f.read().strip()
                     salt_bytes = base64.b64decode(data)
                     if len(salt_bytes) != 16:
-                        print("❌ File content does not decode to 16 bytes. Try again.")
+                        print("File content does not decode to 16 bytes. Try again.")
                         continue
                     return mpw, salt_bytes
                 except Exception as e:
-                    print(f"❌ Error reading or decoding salt file: {e}")
+                    print(f"Error reading or decoding salt file: {e}")
                     continue
 
-            print("❌ Invalid choice. Please select 1, 2, or press Enter for option 3.")
+            print("Invalid choice. Please select 1, 2, or press Enter for option 3.")
 
 def change_master_password(vault: dict, old_master_password: str, old_salt: bytes) -> (str, bytes):
     """
@@ -468,27 +468,27 @@ def change_master_password(vault: dict, old_master_password: str, old_salt: byte
     print("\n=== Change Master Password ===")
     confirm_old = getpass("To proceed, please re-enter your current master password: ")
     if confirm_old != old_master_password:
-        print("❌ Current password is incorrect. Operation cancelled.")
+        print("Current password is incorrect. Operation cancelled.")
         return old_master_password, old_salt
 
     while True:
         new_pw1 = getpass("Enter new master password (min 6 chars): ")
         new_pw2 = getpass("Confirm new master password: ")
         if new_pw1 != new_pw2:
-            print("❌ Passwords do not match. Try again.")
+            print("Passwords do not match. Try again.")
         elif len(new_pw1) < 6:
-            print("❌ Password too short (minimum 6 characters).")
+            print("Password too short (minimum 6 characters).")
         else:
             break
 
     new_salt = get_random_bytes(16)
     new_salt_b64 = base64.b64encode(new_salt).decode('utf-8')
-    print("\n✴️  *** NEW SALT: Save this BASE64 salt somewhere safe! ***")
+    print("\n  *** NEW SALT: Save this BASE64 salt somewhere safe! ***")
     print(f"    NEW SALT (Base64): {new_salt_b64}")
     print("    Without this salt, you won't be able to decrypt your vault later!\n")
 
     save_vault(vault, new_pw1, new_salt)
-    print("✅ Master password changed and vault re-encrypted with new salt.")
+    print("Master password changed and vault re-encrypted with new salt.")
 
     return new_pw1, new_salt
 
@@ -517,9 +517,9 @@ def export_vault_to_json(vault: dict):
     try:
         with open(export_path, 'w', encoding='utf-8') as f:
             json.dump(vault, f, ensure_ascii=False, indent=2)
-        print(f"✅ Export successful. File saved at '{export_path}'.")
+        print(f"Export successful. File saved at '{export_path}'.")
     except Exception as e:
-        print(f"❌ Error saving export file: {e}")
+        print(f"Error saving export file: {e}")
 
 def import_vault_from_json(vault: dict) -> dict:
     """
@@ -529,22 +529,22 @@ def import_vault_from_json(vault: dict) -> dict:
     """
     path = input("Enter full path of JSON file to import: ").strip()
     if not path:
-        print("❌ No path entered. Import cancelled.")
+        print("No path entered. Import cancelled.")
         return vault
 
     if not os.path.isfile(path):
-        print(f"❌ File '{path}' does not exist.")
+        print(f"File '{path}' does not exist.")
         return vault
 
     try:
         with open(path, 'r', encoding='utf-8') as f:
             imported = json.load(f)
     except Exception as e:
-        print(f"❌ Error reading JSON file: {e}")
+        print(f"Error reading JSON file: {e}")
         return vault
 
     if not isinstance(imported, dict):
-        print("❌ JSON format is invalid. Root should be a dictionary.")
+        print("JSON format is invalid. Root should be a dictionary.")
         return vault
 
     print("\nChoose import action:")
@@ -554,16 +554,16 @@ def import_vault_from_json(vault: dict) -> dict:
 
     if action == '1':
         vault = imported
-        print("✅ Vault has been replaced with imported data.")
+        print("Vault has been replaced with imported data.")
     elif action == '2':
         for cat, recs in imported.items():
             if cat not in vault:
                 vault[cat] = recs
             else:
                 vault[cat].extend(recs)
-        print("✅ Imported data has been merged with the current vault.")
+        print("Imported data has been merged with the current vault.")
     else:
-        print("❌ Invalid choice. Import cancelled.")
+        print("Invalid choice. Import cancelled.")
     return vault
 
 # --------------------------
@@ -625,7 +625,7 @@ def main():
             break
 
         else:
-            print("❌ Invalid choice, please try again.")
+            print("Invalid choice, please try again.")
 
 if __name__ == "__main__":
     main()
